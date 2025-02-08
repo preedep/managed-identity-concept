@@ -20,4 +20,12 @@ jsonwebtoken = "9.3"
 tokio = {version = "1", features = ["full"]}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-reqwest = {version = "0.12" , features = ["rustls-tls", "json"]}
+reqwest = {version = "0.12" , default-features = false, features = ["rustls-tls", "json"]}
+
+
+[profile.release]
+lto = "fat"          # Enables Link-Time Optimization (LTO)
+codegen-units = 1    # Maximizes LTO optimization
+opt-level = "z"      # Optimize for binary size
+strip = true         # Removes debug symbols to reduce size
+panic = "abort"      # Removes panic-related stack unwinding to reduce binary size
