@@ -1,3 +1,7 @@
 /target
 /.idea/.gitignore
 /.idea/material_theme_project_new.xml
+/.idea/managed-identity-concept.iml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.env
