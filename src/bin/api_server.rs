@@ -29,6 +29,8 @@ async fn fetch_jwks(jwks_url :&str) -> HashMap<String, DecodingKey> {
     let response = client.get(jwks_url).send().await.unwrap();
     let json: serde_json::Value = response.json().await.unwrap();
 
+    debug!("JWKS: {:#?}", json);
+
     let mut keys = HashMap::new();
     for key in json["keys"].as_array().unwrap() {
         let kid = key["kid"].as_str().unwrap().to_string();
@@ -50,8 +52,10 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
         .await;
 
     let header = jsonwebtoken::decode_header(token).map_err(|_| "Invalid token header")?;
-    let kid = header.kid.ok_or("No KID found")?;
 
+    debug!("Header: {:?}", header);
+
+    let kid = header.kid.ok_or("No KID found")?;
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
     let validation = Validation::new(Algorithm::RS256);
 
