@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use actix_web::{web, HttpRequest, HttpResponse, HttpServer, Responder};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
-use log::{debug, info};
+use log::{debug, error, info};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use tokio::sync::OnceCell;
@@ -52,19 +52,17 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
         .await;
 
     let header = jsonwebtoken::decode_header(token).map_err(|_| "Invalid token header")?;
-
-    debug!("Header: {:?}", header);
-
+    debug!("Header: {:#?}", header);
     let kid = header.kid.ok_or("No KID found")?;
+    debug!("KID: {}", kid);
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
-    let validation = Validation::new(Algorithm::RS256);
-
-    let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|_| "Invalid token")?;
-
-    if token_data.claims.aud != api_audience {
-        return Err("Invalid audience");
-    }
-
+    let mut validation = Validation::new(Algorithm::RS256);
+    validation.set_audience(&[api_audience]);
+    let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|e| {
+        error!("Error: {:#?}", e);
+        "Invalid token"
+    })?;
+    debug!("Token: {:#?}", token_data);
     Ok(token_data.claims)
 }
 
@@ -100,6 +98,8 @@ async fn main() -> Result<(),Box<dyn std::error::Error>> {
         api_audience: audience,
         tenant_id,
     };
+
+    debug!("App State: {:#?}", app_state);
 
     HttpServer::new(
         move || actix_web::App::new()
