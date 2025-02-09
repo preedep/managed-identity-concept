@@ -53,23 +53,22 @@ sequenceDiagram
 
 Example powershell
 ```
-$tenantId = '<your tenant id>'
-$serverRoleId = '<your server role id (app role id)>'
-$clientManagedIdentity = '<your client managed identity id (principal id)>'
-$serverEnterpriseApp = '<your server enterprise app id (object id)>'
+Import-Module Microsoft.Graph.Applications
 
-Connect-AzureAd -TenantId $tenantId
+$params = @{
+	principalId = "9028d19c-26a9-4809-8e3f-20ff73e2d75e"
+	resourceId = "8fce32da-1246-437b-99cd-76d1d4677bd5"
+	appRoleId = "498476ce-e0fe-48b0-b801-37ba7e2685c6"
+}
 
-New-AzureADServiceAppRoleAssignment `
-    -Id $serverRoleId `
-    -PrincipalId $clientManagedIdentity `
-    -ObjectId $clientManagedIdentity `
-    -ResourceId $serverEnterpriseApp
+New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $servicePrincipalId -BodyParameter $params
+
 ```
-
-$$clientManagedIdentity = '<your client managed identity id (principal id)>'
+principalId = '<your client managed identity id (principal id)>'
 ![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image1.png)
 
+resourceId = '<your api app id>'
+![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image3.png))
 
 
 If you’re performing these operations programmatically using a service principal or managed identity, ensure that it has the necessary Microsoft Graph API application permissions granted and consented:
