@@ -68,7 +68,7 @@ New-AzureADServiceAppRoleAssignment `
 ```
 
 $$clientManagedIdentity = '<your client managed identity id (principal id)>'
-![Alt text](../images/image1.png)
+![Alt text](../blob/images/image1.png)
 
 
 
