@@ -66,11 +66,13 @@ New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $servicePrincipalId 
 ```
 
 principalId = "<your client managed identity id (principal id)>"
-![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image1.png)
+![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image2.png)
 
 resourceId = "<your api app id>"
 ![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image3.png)
 
+appRoleId = "<your app role id>"
+![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image1.png)
 
 If you’re performing these operations programmatically using a service principal or managed identity, ensure that it has the necessary Microsoft Graph API application permissions granted and consented:
 •	AppRoleAssignment.ReadWrite.All: Allows the app to read and write all application role assignments without a signed-in user.
