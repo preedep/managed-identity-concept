@@ -17,6 +17,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Request a token from Azure IMDS
     let identity_endpoint = "http://169.254.169.254/metadata/identity/oauth2/token";
+
     let token_response = client
         .get(identity_endpoint)
         .query(&[
@@ -28,6 +29,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     let token_body: Value = token_response.json().await?;
+    debug!("Token Response: {:#?}", token_body);
+
+
     let access_token = token_body["access_token"].as_str().unwrap();
 
     debug!("Access Token: {}", access_token);
