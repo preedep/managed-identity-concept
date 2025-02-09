@@ -64,6 +64,94 @@ $params = @{
 New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $servicePrincipalId -BodyParameter $params
 
 ```
+Example rust code 
+```rust
+use reqwest::Client;
+use serde_json::{json, Value};
+use azure_identity::{DefaultAzureCredential, TokenCredentialOptions};
+use azure_core::auth::TokenCredential;
+use log::{debug, error, info};
+use std::error::Error;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    pretty_env_logger::init();
+    dotenv::dotenv().ok();
+
+    // Initialize the HTTP client
+    let client = Client::new();
+
+    // Obtain an access token
+    let credential = DefaultAzureCredential::create(TokenCredentialOptions::default())?;
+    let token = credential
+        .get_token(&["https://graph.microsoft.com/.default"])
+        .await?;
+
+    debug!("Access token: {:?}", token.token.secret());
+
+    // Define the client ID of your application (example is rust-api-aad)
+    let client_id = std::env::var("AZURE_CLIENT_ID")?;
+    // Define the appId of your application
+    let app_id = client_id;
+
+    // Retrieve the service principal's ID
+    let sp_response = client
+        .get(&format!(
+            "https://graph.microsoft.com/v1.0/servicePrincipals?$filter=appId eq '{}'",
+            app_id
+        ))
+        .bearer_auth(token.token.secret())
+        .send()
+        .await?;
+
+    if sp_response.status().is_success() {
+        let sp_json: Value = sp_response.json().await?;
+        debug!("Service Principal: {:#?}", sp_json);
+
+        if let Some(sp_id) = sp_json["value"][0]["id"].as_str() {
+            info!("Service Principal ID: {}", sp_id);
+
+            // Define the app role assignment
+            let app_role_assignment = json!({
+                "principalId": "bade3fcb-212d-47fc-9305-bec2cccd22ed",
+                "resourceId": "e0d8073f-7a4d-4797-96f1-a2b7368974d5",
+                "appRoleId": "b8424875-7729-478e-ab73-a3e60fad79fd"
+            });
+
+            // Send the HTTP request to assign the app role
+            let response = client
+                .post(&format!(
+                    "https://graph.microsoft.com/v1.0/servicePrincipals/{}/appRoleAssignments",
+                    sp_id
+                ))
+                .bearer_auth(token.token.secret())
+                .json(&app_role_assignment)
+                .send()
+                .await?;
+
+            // Check the response
+            if response.status().is_success() {
+                info!("App role assigned successfully.");
+            } else {
+                error!(
+                    "Failed to assign app role: {:#?}",
+                    response.json::<Value>().await?
+                );
+            }
+        } else {
+            error!("Service Principal not found for appId: {}", app_id);
+        }
+    } else {
+        error!(
+            "Failed to retrieve service principal: {:#?}",
+            sp_response.json::<Value>().await?
+        );
+    }
+
+    Ok(())
+}
+
+```
 
 #principalId = "<your client managed identity id (principal id)>"
 ![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image2.png)
