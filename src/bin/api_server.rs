@@ -60,6 +60,7 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
     let validation = Validation::new(Algorithm::RS256);
 
     let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|_| "Invalid token")?;
+    debug!("Token: {:#?}", token_data);
 
     if token_data.claims.aud != api_audience {
         return Err("Invalid audience");
@@ -100,6 +101,8 @@ async fn main() -> Result<(),Box<dyn std::error::Error>> {
         api_audience: audience,
         tenant_id,
     };
+
+    debug!("App State: {:#?}", app_state);
 
     HttpServer::new(
         move || actix_web::App::new()
