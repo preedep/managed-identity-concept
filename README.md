@@ -68,7 +68,6 @@ New-AzureADServiceAppRoleAssignment `
 ```
 
 $$clientManagedIdentity = '<your client managed identity id (principal id)>'
-![Image in master](https://github.com/preedep/managed-identity-concept/blob/master/images/image1.png)
 ![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image1.png)
 
 
