@@ -49,3 +49,19 @@ sequenceDiagram
 ## Prerequisites
 
 [Grant App Role to Managed Identity](https://learn.microsoft.com/en-us/graph/api/serviceprincipal-post-approleassignments?view=graph-rest-1.0&tabs=http#permissions)
+
+Example powershell
+```
+$tenantId = '<your tenant id>'
+$serverRoleId = '<your server role id (app role id)>'
+$clientManagedIdentity = '<your client managed identity id (principal id)>'
+$serverEnterpriseApp = '<your server enterprise app id (object id)>'
+
+Connect-AzureAd -TenantId $tenantId
+
+New-AzureADServiceAppRoleAssignment `
+    -Id $serverRoleId `
+    -PrincipalId $clientManagedIdentity `
+    -ObjectId $clientManagedIdentity `
+    -ResourceId $serverEnterpriseApp
+```
