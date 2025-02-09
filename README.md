@@ -67,6 +67,11 @@ New-AzureADServiceAppRoleAssignment `
     -ResourceId $serverEnterpriseApp
 ```
 
+$$clientManagedIdentity = '<your client managed identity id (principal id)>'
+![Alt text](../images/image1.png)
+
+
+
 If you’re performing these operations programmatically using a service principal or managed identity, ensure that it has the necessary Microsoft Graph API application permissions granted and consented:
 •	AppRoleAssignment.ReadWrite.All: Allows the app to read and write all application role assignments without a signed-in user.
 •	Application.ReadWrite.All: Allows the app to read and write all applications and app registrations without a signed-in user.
