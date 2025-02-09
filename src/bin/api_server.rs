@@ -56,7 +56,6 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
     let kid = header.kid.ok_or("No KID found")?;
     debug!("KID: {}", kid);
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
-    debug!("Decoding Key: {:?}", decoding_key);
     let validation = Validation::new(Algorithm::RS256);
     let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|_| "Invalid token")?;
     debug!("Token: {:#?}", token_data);
