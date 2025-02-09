@@ -52,16 +52,12 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
         .await;
 
     let header = jsonwebtoken::decode_header(token).map_err(|_| "Invalid token header")?;
-
-    debug!("Header: {:?}", header);
-
+    debug!("Header: {:#?}", header);
     let kid = header.kid.ok_or("No KID found")?;
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
     let validation = Validation::new(Algorithm::RS256);
-
     let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|_| "Invalid token")?;
     debug!("Token: {:#?}", token_data);
-
     if token_data.claims.aud != api_audience {
         return Err("Invalid audience");
     }
