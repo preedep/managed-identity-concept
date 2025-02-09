@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use actix_web::{web, HttpRequest, HttpResponse, HttpServer, Responder};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
-use log::{debug, info};
+use log::{debug, error, info};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use tokio::sync::OnceCell;
@@ -57,7 +57,10 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
     debug!("KID: {}", kid);
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
     let validation = Validation::new(Algorithm::RS256);
-    let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|_| "Invalid token")?;
+    let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|e| {
+        error!("Error: {:#?}", e);
+        "Invalid token"
+    })?;
     debug!("Token: {:#?}", token_data);
     if token_data.claims.aud != api_audience {
         return Err("Invalid audience");
