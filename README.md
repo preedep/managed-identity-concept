@@ -1,6 +1,6 @@
 # managed-identity-concept
 
-This repository contains a simple Rust API server that demonstrates how to authenticate requests using Azure Managed Identity. The API server is built using the [actix-web](https://actix.rs/) framework and uses the [jsonwebtoken](
+This repository contains a simple Rust API server that demonstrates how to authenticate requests using Azure Managed Identity. The API server is built using the [actix-web](https://actix.rs/) framework 
 I've developed this project to understand how Managed Identity works in Azure and how to authenticate requests using the access token provided by Azure AD and reduce the complexity of managing secrets and api key rotation in the application.
 
 ```mermaid
@@ -64,11 +64,12 @@ $params = @{
 New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $servicePrincipalId -BodyParameter $params
 
 ```
-principalId = '<your client managed identity id (principal id)>'
+
+principalId = "<your client managed identity id (principal id)>"
 ![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image1.png)
 
-resourceId = '<your api app id>'
-![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image3.png))
+resourceId = "<your api app id>"
+![Image in develop](https://github.com/preedep/managed-identity-concept/blob/develop/images/image3.png)
 
 
 If you’re performing these operations programmatically using a service principal or managed identity, ensure that it has the necessary Microsoft Graph API application permissions granted and consented:
