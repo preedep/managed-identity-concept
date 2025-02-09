@@ -45,3 +45,7 @@ sequenceDiagram
     Note over API: **Step 9 - Return Protected Data**
     API-->>Client: Return JSON Response 🎉
 ```
+
+## Prerequisites
+
+[Grant App Role to Managed Identity](https://learn.microsoft.com/en-us/graph/api/serviceprincipal-post-approleassignments?view=graph-rest-1.0&tabs=http#permissions)
