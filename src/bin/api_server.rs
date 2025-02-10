@@ -12,6 +12,7 @@ struct Claims {
     iss: String, // Issuer must be Azure AD
     sub: String, // Subject (Service Principal or Managed Identity)
     exp: usize,  // Expiration time
+    roles : Option<Vec<String>>, // Roles
 }
 #[derive(Debug,Clone, Serialize, Deserialize)]
 struct AppState {
@@ -77,7 +78,19 @@ async fn protected_endpoint(req: HttpRequest,app_state: web::Data<AppState>) -> 
     let api_audience = &app_state.api_audience;
     let jwks_url = &app_state.jwks_url;
     match validate_token(&token,jwks_url,api_audience).await {
-        Ok(claims) => HttpResponse::Ok().json(format!("Welcome! Your ID is {}", claims.sub)),
+        Ok(claims) => {
+            if let Some(roles) = claims.roles {
+                debug!("Roles: {:#?}", roles);
+                // Check if the user has the required role
+                // In this example, we are checking for the "Task.HelloWorld" role
+                if !roles.contains(&"Task.HelloWorld".to_string()) {
+                    return HttpResponse::Forbidden().body("Not authorized");
+                }
+                HttpResponse::Ok().json(format!("Welcome! Your ID is {}", claims.sub))
+            } else {
+                HttpResponse::Forbidden().body("Forbidden")
+            }
+    },
         Err(err) => HttpResponse::Unauthorized().body(err),
     }
 }
