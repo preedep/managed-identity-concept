@@ -17,6 +17,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Use Managed Identity with DefaultAzureCredential
     let credential = DefaultAzureCredential::create(TokenCredentialOptions::default())?;
+    // Get a token for the resource
+    // Example resource > "https://management.azure.com/" or api://<resource-id>
     let token_response = credential.get_token(&[resource.as_str()]).await?;
     let access_token = token_response.token.secret();
 
