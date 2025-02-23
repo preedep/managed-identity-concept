@@ -1,11 +1,9 @@
-use reqwest::Client;
-use serde_json::Value;
-use std::error::Error;
 use azure_core::auth::TokenCredential;
 use azure_identity::{DefaultAzureCredential, TokenCredentialOptions};
 use dotenv::dotenv;
 use log::{debug, info};
-
+use reqwest::Client;
+use std::error::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -19,6 +17,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Use Managed Identity with DefaultAzureCredential
     let credential = DefaultAzureCredential::create(TokenCredentialOptions::default())?;
+    // Get a token for the resource
+    // Example resource > "https://management.azure.com/" or api://<resource-id>
     let token_response = credential.get_token(&[resource.as_str()]).await?;
     let access_token = token_response.token.secret();
 
