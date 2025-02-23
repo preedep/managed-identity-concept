@@ -1,11 +1,9 @@
-use reqwest::Client;
-use serde_json::Value;
-use std::error::Error;
 use azure_core::auth::TokenCredential;
 use azure_identity::{DefaultAzureCredential, TokenCredentialOptions};
 use dotenv::dotenv;
 use log::{debug, info};
-
+use reqwest::Client;
+use std::error::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

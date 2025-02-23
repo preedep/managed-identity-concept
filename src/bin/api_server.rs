@@ -58,6 +58,7 @@ async fn validate_token(token: &str,jwks_url:&str, api_audience: &str) -> Result
     debug!("KID: {}", kid);
     let decoding_key = keys.get(&kid).ok_or("No matching JWK found")?;
     let mut validation = Validation::new(Algorithm::RS256);
+    //validation.set_issuer(&["https://sts.windows.net/".to_string() + &decoding_key.modulus().unwrap()]);
     validation.set_audience(&[api_audience]);
     let token_data = decode::<Claims>(token, decoding_key, &validation).map_err(|e| {
         error!("Error: {:#?}", e);
