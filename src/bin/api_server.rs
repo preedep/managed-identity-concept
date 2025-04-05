@@ -199,6 +199,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "/api_protected",
                 actix_web::web::get().to(protected_endpoint),
             )
+            .route(
+                "/api_protected",
+                actix_web::web::post().to(protected_endpoint),
+            )
     })
     .bind("0.0.0.0:8888")?
     .run()
