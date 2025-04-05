@@ -122,6 +122,7 @@ async fn validate_token(
         .get_or_init(|| async { fetch_jwks(jwks_url).await })
         .await;
 
+
     let header = jsonwebtoken::decode_header(token).map_err(|_| "Invalid token header")?;
     debug!("Header: {:#?}", header);
     let kid = header.kid.ok_or("No KID found")?;
@@ -149,6 +150,10 @@ async fn protected_endpoint(req: HttpRequest, app_state: web::Data<AppState>) ->
         .to_str()
         .unwrap()
         .replace("Bearer ", "");
+
+    debug!("Token: {}", token);
+
+    // Validate the token
     let api_audience = &app_state.api_audience;
     let jwks_url = &app_state.jwks_url;
     match validate_token(&token, jwks_url, api_audience).await {
